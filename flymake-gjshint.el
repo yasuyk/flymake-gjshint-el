@@ -21,7 +21,7 @@
 
 ;;; Commentary:
 
-;;; Usage:
+;; Usage:
 
 ;; Add to your emacs config:
 
