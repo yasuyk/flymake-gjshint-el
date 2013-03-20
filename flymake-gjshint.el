@@ -103,6 +103,7 @@ the way up to the filesystem root."
   '("^\\(.*\\): line \\([[:digit:]]+\\), col \\([[:digit:]]+\\), \\(.+\\)$"
     1 2 3 4))
 
+;;;###autoload
 (defun flymake-gjshint:fixjsstyle ()
   (interactive)
   (if (executable-find flymake-gjshint:fixjsstyle-command)
