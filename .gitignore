@@ -1,0 +1,2 @@
+*.elc
+test/el-mock.el
