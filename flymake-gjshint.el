@@ -1,4 +1,4 @@
-;;; flymake-jslint.el --- A flymake handler for javascript using jshint and gjslint
+;;; flymake-gjshint.el --- A flymake handler for javascript using jshint and gjslint
 
 ;; Copyright (C) 2013  Yasuyuki Oka
 
