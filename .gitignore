@@ -1,2 +1,4 @@
 *.elc
 test/el-mock.el
+test/checkdoc-batch.el
+
