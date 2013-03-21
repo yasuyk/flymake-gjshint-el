@@ -44,21 +44,27 @@
     (should (string-match  pattern test:jshint-err02))))
 
 (ert-deftest test:setup ()
-  (flymake-gjshint:setup)
+  (let ((flymake-gjshint t))
+    (flymake-gjshint:setup)
+    (should (local-variable-p 'flymake-allowed-file-name-masks))
+    (should (local-variable-p 'flymake-err-line-patterns))
+    (should (memq flymake-gjshint:allowed-file-name-masks
+                  flymake-allowed-file-name-masks))
+    (should (memq flymake-gjshint:gjslint-err-line-patterns
+                  flymake-err-line-patterns))
+    (should (memq flymake-gjshint:jshint-err-line-patterns
+                  flymake-err-line-patterns))
+    (should (eq flymake-mode t)))
 
-  (should (local-variable-p 'flymake-allowed-file-name-masks))
-  (should (local-variable-p 'flymake-err-line-patterns))
-  (should (memq flymake-gjshint:allowed-file-name-masks
-                flymake-allowed-file-name-masks))
-  (should (memq flymake-gjshint:gjslint-err-line-patterns
-                flymake-err-line-patterns))
-  (should (memq flymake-gjshint:jshint-err-line-patterns
-                flymake-err-line-patterns))
-  (should (eq flymake-mode t)))
+  (let ((flymake-gjshint nil))
+    (flymake-gjshint:setup)
+    (mocklet ((make-local-variable not-called)
+              (add-to-list not-called)
+              (flymake-mode not-called)))))
 
 (ert-deftest test:load ()
   (mocklet ((message)
-            (flymake-gjshint:setup not-called))
+            (make-local-variable not-called))
     ;; show error message, if jshint and gjslint is not found.
     (mocklet ((executable-find))
       (flymake-gjshint:load))
@@ -67,4 +73,13 @@
       (flymake-gjshint:load))
     ;; show error message, if gjslint is not found.
     (let ((flymake-gjshint:gjslint-command ""))
-      (flymake-gjshint:load))))
+      (flymake-gjshint:load))
+    (let ((flymake-gjshint nil))
+      ;; flymake-gjshint:setup is not called,
+      ;; if flymake:gjshint is not found.
+      (mocklet ((executable-find => t))
+        (flymake-gjshint:load))))
+  (mocklet ((executable-find => t))
+    (let ((flymake-gjshint t))
+      (flymake-gjshint:load)))
+  (should (local-variable-p 'hack-local-variables-hook)))

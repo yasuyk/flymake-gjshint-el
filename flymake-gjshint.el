@@ -34,6 +34,13 @@
 (require 'flymake)
 
 ;;;###autoload
+(defcustom flymake-gjshint t
+  "If non-nil, `flymake-gjshint' is enabled."
+  :type 'string
+  :group 'flymake-gjshint)
+(put 'flymake-gjshint 'safe-local-variable 'booleanp)
+
+;;;###autoload
 (defcustom flymake-gjshint:jshint-configuration-path nil
   "Path to a JSON configuration file for JSHint.
 
@@ -124,16 +131,17 @@ the way up to the filesystem root."
 
 (defun flymake-gjshint:setup ()
   "Set up flymake for gjshint."
-  (make-local-variable 'flymake-allowed-file-name-masks)
-  (make-local-variable 'flymake-err-line-patterns)
+  (when flymake-gjshint
+    (make-local-variable 'flymake-allowed-file-name-masks)
+    (make-local-variable 'flymake-err-line-patterns)
 
-  (add-to-list 'flymake-allowed-file-name-masks
-               flymake-gjshint:allowed-file-name-masks)
-  (add-to-list 'flymake-err-line-patterns
-               flymake-gjshint:gjslint-err-line-patterns)
-  (add-to-list 'flymake-err-line-patterns
-               flymake-gjshint:jshint-err-line-patterns)
-  (flymake-mode t))
+    (add-to-list 'flymake-allowed-file-name-masks
+                 flymake-gjshint:allowed-file-name-masks)
+    (add-to-list 'flymake-err-line-patterns
+                 flymake-gjshint:gjslint-err-line-patterns)
+    (add-to-list 'flymake-err-line-patterns
+                 flymake-gjshint:jshint-err-line-patterns)
+    (flymake-mode 1)))
 
 (defvar flymake-gjshint:jshint-url
   "http://www.jshint.com"
@@ -153,8 +161,10 @@ function `flymake-mode' alone will not suffice."
   (interactive)
   (let ((jshint (executable-find flymake-gjshint:jshint-command))
         (gjslint (executable-find flymake-gjshint:gjslint-command)))
-    (if (and jshint gjslint)
-        (flymake-gjshint:setup)
+    (if (and flymake-gjshint jshint gjslint)
+        (progn
+          (make-local-variable 'hack-local-variables-hook)
+          (add-hook 'hack-local-variables-hook 'flymake-gjshint:setup))
       (unless jshint
         (message (format
                   "jshint not found. Install it from %s"
