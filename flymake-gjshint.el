@@ -23,7 +23,7 @@
 
 ;; Usage:
 
-;; Add to your emacs config:
+;; Add to your Emacs config:
 
 ;;   (require 'flymake-gjshint)
 ;;   (add-hook 'js-mode-hook 'flymake-gjshint:load)
@@ -66,6 +66,7 @@ the way up to the filesystem root."
   :type 'string :group 'flymake-gjshint)
 
 (defun flymake-gjshint:jshint-command-line ()
+  "Create jshint command line."
   (if flymake-gjshint:jshint-configuration-path
       (format "%s --config %s "
               flymake-gjshint:jshint-command
@@ -73,6 +74,7 @@ the way up to the filesystem root."
     flymake-gjshint:jshint-command))
 
 (defun flymake-gjshint:gjslint-command-line ()
+  "Create gjslint command line."
   (if flymake-gjshint:gjslint-flagfile-path
       (format "%s --flagfile %s "
               flymake-gjshint:gjslint-command
@@ -80,7 +82,7 @@ the way up to the filesystem root."
     flymake-gjshint:gjslint-command))
 
 (defun flymake-gjshint:init ()
-  "Initialize flymake for gjshint."
+  "Create syntax check command line using jshint and gjslint."
   (let* ((tempfile (flymake-init-create-temp-buffer-copy
                     'flymake-create-temp-inplace)))
     (list "sh"
@@ -105,6 +107,7 @@ the way up to the filesystem root."
 
 ;;;###autoload
 (defun flymake-gjshint:fixjsstyle ()
+  "Fix many of the glslint errors in current buffer."
   (interactive)
   (if (executable-find flymake-gjshint:fixjsstyle-command)
       (when (equal 0 (call-process-shell-command
@@ -120,6 +123,7 @@ the way up to the filesystem root."
                      flymake-gjshint:fixjsstyle-command))))
 
 (defun flymake-gjshint:setup ()
+  "Set up flymake for gjshint."
   (make-local-variable 'flymake-allowed-file-name-masks)
   (make-local-variable 'flymake-err-line-patterns)
 
@@ -132,10 +136,12 @@ the way up to the filesystem root."
   (flymake-mode t))
 
 (defvar flymake-gjshint:jshint-url
-  "http://www.jshint.com")
+  "http://www.jshint.com"
+  "`jshint` website URL.")
 
 (defvar flymake-gjshint:gjslint-url
-  "https://developers.google.com/closure/utilities/docs/linter_howto")
+  "https://developers.google.com/closure/utilities/docs/linter_howto"
+  "`gjslint` website URL.")
 
 ;;;###autoload
 (defun flymake-gjshint:load ()
