@@ -28,6 +28,16 @@
 ;;   (require 'flymake-gjshint)
 ;;   (add-hook 'js-mode-hook 'flymake-gjshint:load)
 ;;
+;;
+;; If you want to disable flymake-gjshint in a certain directory
+;; (e.g. test code directory), set flymake-gjshint to nil in `.dir-locals.el'.
+;;
+;; Here’s an example of a `.dir-locals.el' file:
+;; -----------------------------------
+;; ((nil . ((flymake-gjshint . nil))))
+;; -----------------------------------
+;;
+;;
 
 ;;; Code:
 
