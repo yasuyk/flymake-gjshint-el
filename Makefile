@@ -10,7 +10,7 @@ checkdoc-batch: test/checkdoc-batch.el
 	$(EMACS) --batch -L test -l checkdoc-batch.el -f checkdoc-batch-commandline $(SRC) | grep -e "$(SRC):[1-9]" && exit 1 || exit 0
 
 sandbox:
-	$(EMACS) -Q -L . -l flymake-gjshint.el
+	$(EMACS) -Q -L . -l $(SRC)
 
 test/el-mock.el:
 	wget http://www.emacswiki.org/emacs/download/el-mock.el -O $@
@@ -18,3 +18,7 @@ test/el-mock.el:
 test/checkdoc-batch.el:
 	wget ftp://download.tuxfamily.org/user42/checkdoc-batch.el -O $@
 
+emacs-version:
+	$(EMACS) --version
+
+travis-ci: emacs-version test checkdoc-batch
