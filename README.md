@@ -1,6 +1,8 @@
 flymake-gjshint.el
 =================
 
+[![Build Status](https://travis-ci.org/yasuyk/flymake-gjshint-el.png?branch=master)](https://travis-ci.org/yasuyk/flymake-gjshint-el)
+
 An Emacs flymake handler for syntax-checking Javascript source code
 using [`jshint`][jshint] and [`gjslint`][gjslint].
 
