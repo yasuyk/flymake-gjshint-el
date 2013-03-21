@@ -65,14 +65,14 @@ the way up to the filesystem root."
   "Name (and optionally full path) of fixjsstyle executable."
   :type 'string :group 'flymake-gjshint)
 
-(defun flymake-gjshint:jshint-command-sentence ()
+(defun flymake-gjshint:jshint-command-line ()
   (if flymake-gjshint:jshint-configuration-path
       (format "%s --config %s "
               flymake-gjshint:jshint-command
               flymake-gjshint:jshint-configuration-path)
     flymake-gjshint:jshint-command))
 
-(defun flymake-gjshint:gjslint-command-sentence ()
+(defun flymake-gjshint:gjslint-command-line ()
   (if flymake-gjshint:gjslint-flagfile-path
       (format "%s --flagfile %s "
               flymake-gjshint:gjslint-command
@@ -86,8 +86,8 @@ the way up to the filesystem root."
     (list "sh"
           (list "-c"
                 (format "%s %s; %s %s;"
-                        (flymake-gjshint:jshint-command-sentence) tempfile
-                        (flymake-gjshint:gjslint-command-sentence) tempfile)))))
+                        (flymake-gjshint:jshint-command-line) tempfile
+                        (flymake-gjshint:gjslint-command-line) tempfile)))))
 
 (defvar flymake-gjshint:allowed-file-name-masks
   '(".+\\.js$"

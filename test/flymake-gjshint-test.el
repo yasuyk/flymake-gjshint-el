@@ -2,29 +2,29 @@
 (require 'el-mock)
 (require 'flymake-gjshint)
 
-(ert-deftest test:jshint-command-sentence ()
+(ert-deftest test:jshint-command-line ()
   (let ((flymake-gjshint:jshint-configuration-path nil))
     (should (equal flymake-gjshint:jshint-command
-                   (flymake-gjshint:jshint-command-sentence))))
+                   (flymake-gjshint:jshint-command-line))))
   (let* ((config (expand-file-name "~/.jshintrc"))
          (flymake-gjshint:jshint-configuration-path config))
     (should (equal (format
                     "%s --config %s "
                     flymake-gjshint:jshint-command
                     config)
-                   (flymake-gjshint:jshint-command-sentence)))))
+                   (flymake-gjshint:jshint-command-line)))))
 
-(ert-deftest test:gjslint-command-sentence ()
+(ert-deftest test:gjslint-command-line ()
   (let ((flymake-gjshint:gjslint-flagfile-path nil))
     (should (equal flymake-gjshint:gjslint-command
-                   (flymake-gjshint:gjslint-command-sentence))))
+                   (flymake-gjshint:gjslint-command-line))))
   (let* ((config (expand-file-name "~/.gjslintrc"))
          (flymake-gjshint:gjslint-flagfile-path config))
     (should (equal (format
                     "%s --flagfile %s "
                     flymake-gjshint:gjslint-command
                     config)
-                   (flymake-gjshint:gjslint-command-sentence)))))
+                   (flymake-gjshint:gjslint-command-line)))))
 
 (defvar test:gjslint-err01
   "Line 1, E:0001: Extra space after function")
