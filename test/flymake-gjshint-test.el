@@ -32,9 +32,8 @@
 (ert-deftest test:gjslint-err-line-patterns ()
   (let((pattern (car flymake-gjshint:gjslint-err-line-patterns)))
     (should (string-match  pattern test:gjslint-err01))))
-
 (defvar test:jshint-err01
-  "src/test.js: line 1, col 5, Redefinition of 'gloval'.")
+  "src/test.js: line 1, col 5, Redefinition of 'global'.")
 (defvar test:jshint-err02
   "src/test.js: line 1, col 13, 'global' is defined but never used.")
 
