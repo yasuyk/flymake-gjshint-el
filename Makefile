@@ -36,7 +36,7 @@ bump-version: $(SRC) checkdoc-batch test
 	  echo Usage: make bump-version NEW_VERSION=0.4.1; \
 	  exit 1; \
 	fi
-	sed -i "" -e 's/^;; Version: .*/;; Version: $(NEW_VERSION)/' $^
+	sed -i "" -e 's/^;; Version: .*/;; Version: $(NEW_VERSION)/' $(SRC)
 	echo "Bump version to $(NEW_VERSION)"
 	git commit -am "Bump version to $(NEW_VERSION)"
 	git tag -a $(NEW_VERSION) -m $(NEW_VERSION)
