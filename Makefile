@@ -30,7 +30,7 @@ emacs-version:
 
 travis-ci: emacs-version test checkdoc-batch
 
-bump-version: $(SRC)
+bump-version: $(SRC) checkdoc-batch test
 	@if [ "$(NEW_VERSION)" = "" ]; then \
 	  echo NEW_VERSION argument not provided.; \
 	  echo Usage: make bump-version NEW_VERSION=0.4.1; \
