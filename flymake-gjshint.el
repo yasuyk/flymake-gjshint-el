@@ -43,6 +43,11 @@
 
 (require 'flymake)
 
+(defgroup flymake-gjshint nil
+  "Flymake checking of Javascript using jshint and gjslint"
+  :group 'programming
+  :prefix "flymake-gjshint")
+
 ;;;###autoload
 (defcustom flymake-gjshint t
   "If non-nil, `flymake-gjshint' is enabled."
