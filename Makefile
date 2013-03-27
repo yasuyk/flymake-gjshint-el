@@ -1,14 +1,11 @@
 EMACS=emacs
 SRC=flymake-gjshint.el
-HELPER=test/interactive/helper.el
 
 test: test/el-mock.el
-	$(EMACS) --batch  -l ert -L . -L test -l test/flymake-gjshint-test.el -f ert-run-tests-batch-and-exit
+	emacs -batch -Q -l test/run-test.el
 
-test-interactively: jshint gjslint
-	$(EMACS) -Q -L . -l $(HELPER) test/interactive/test.js
-	$(EMACS) -Q -L . -l $(HELPER) test/interactive/file-loal-test.js
-	$(EMACS) -Q -L . -l $(HELPER) test/interactive/dir/dir-local-test.js
+test-interactively: test/el-mock.el jshint gjslint
+	${EMACS} -Q -L . -l test/run-test.el
 
 checkdoc-batch: test/checkdoc-batch.el
 	$(EMACS) --batch -L test -l checkdoc-batch.el -f checkdoc-batch-commandline $(SRC) | grep -e "$(SRC):[1-9]" && exit 1 || exit 0

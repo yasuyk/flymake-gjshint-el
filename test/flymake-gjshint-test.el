@@ -2,6 +2,11 @@
 (require 'el-mock)
 (require 'flymake-gjshint)
 
+;; eval the following forms, when Testing in customized emacs configuration.
+;;
+;; (add-to-list 'load-path (expand-file-name "."))
+;; (add-to-list 'load-path (expand-file-name ".."))
+
 (ert-deftest test:jshint-command-line ()
   (let ((flymake-gjshint:jshint-configuration-path nil))
     (should (equal flymake-gjshint:jshint-command
@@ -67,12 +72,6 @@
     ;; show error message, if jshint and gjslint is not found.
     (mocklet ((executable-find))
       (flymake-gjshint:load))
-    ;; show error message, if jshint is not found.
-    (let ((flymake-gjshint:jshint-command ""))
-      (flymake-gjshint:load))
-    ;; show error message, if gjslint is not found.
-    (let ((flymake-gjshint:gjslint-command ""))
-      (flymake-gjshint:load))
     (let ((flymake-gjshint nil))
       ;; flymake-gjshint:setup is not called,
       ;; if flymake:gjshint is not found.
@@ -82,3 +81,106 @@
     (let ((flymake-gjshint t))
       (flymake-gjshint:load)))
   (should (local-variable-p 'hack-local-variables-hook)))
+
+(unless noninteractive
+  (defun flymake-error-list ()
+    (let* ((line-no            (flymake-current-line-no))
+           (line-err-info-list (nth 0 (flymake-find-err-info flymake-err-info line-no)))
+           (menu-data          (flymake-make-err-menu-data line-no line-err-info-list)))
+      (when menu-data
+        (mapcar (lambda (el) (car el)) (cadr menu-data)))))
+
+  (defun flymake-next-error-p ()
+    "Go to next error in err ring."
+    (interactive)
+    (let ((line-no (flymake-get-next-err-line-no flymake-err-info (flymake-current-line-no))))
+      (when (not line-no)
+        (setq line-no (flymake-get-first-err-line-no flymake-err-info))
+        (flymake-log 1 "passed end of file"))
+      (if line-no t nil)))
+
+  (defvar is-exec-from-run-test (boundp 'test-dir))
+
+
+  (ert-deftest test:flymake-error ()
+    (let (js-mode-hook buffer dir)
+      (add-hook 'js-mode-hook 'flymake-gjshint:load)
+
+      (setq dir (if is-exec-from-run-test test-dir (expand-file-name ".")))
+
+      (setq buffer (find-file (format "%s/interactive/test.js" dir)))
+      (sit-for 1) ;; wait for buffer-file-name set
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (should (flymake-error-list)))
+
+      (setq buffer (find-file (format "%s/interactive/file-local-test.js" dir)))
+      (sit-for 1) ;; wait for buffer-file-name set
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (should (not (flymake-next-error-p))))
+
+      (setq buffer (find-file (format "%s/interactive/file-local-test-gjslint.js" dir)))
+      (sit-for 1) ;; wait for buffer-file-name set
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (forward-line 4)
+        (should (flymake-error-list)))
+
+      (setq buffer (find-file (format "%s/interactive/dir/dir-local-test.js" dir)))
+      (sit-for 1) ;; wait for buffer-file-name set
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (should (not (flymake-error-list))))
+      ))
+
+  (ert-deftest test:flymake-gjshint:init-jshint ()
+    (let ((flymake-gjshint 'jshint)
+          (flymake-gjshint:jshint-configuration-path "")
+          js-mode-hook buffer dir)
+      (add-hook 'js-mode-hook 'flymake-gjshint:load)
+
+      (setq dir (if is-exec-from-run-test test-dir (expand-file-name ".")))
+
+      (setq buffer (find-file (format "%s/interactive/file-local-test-jshint.js" dir)))
+      (sit-for 1) ;; wait for buffer-file-name set
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (should (flymake-error-list)))
+
+      (let ((flymake-gjshint:jshint-configuration-path
+             (format "%s/interactive/.jshintrc" dir)))
+        (kill-buffer buffer)
+        (setq buffer (find-file (format "%s/interactive/file-local-test-jshint.js" dir)))
+        (sit-for 1) ;; wait for buffer-file-name set
+        (with-current-buffer buffer
+          (goto-char (point-min))
+          (should (flymake-error-list)))
+        )))
+
+  (ert-deftest test:flymake-gjshint:init-gjslint ()
+    (let ((flymake-gjshint 'gjslint)
+          (flymake-gjshint:gjslint-flagfile-path "")
+          js-mode-hook buffer dir)
+      (add-hook 'js-mode-hook 'flymake-gjshint:load)
+
+      (setq dir (if is-exec-from-run-test test-dir (expand-file-name ".")))
+
+      (setq buffer (find-file (format "%s/interactive/file-local-test-gjslint.js" dir)))
+      (sit-for 1) ;; wait for buffer-file-name set
+      (with-current-buffer buffer
+        (goto-char (point-min))
+        (forward-line 4)
+        (should (flymake-error-list)))
+
+      (let ((flymake-gjshint:gjslint-flagfile-path
+             (format "%s/interactive/.gjslintrc" dir)))
+        (kill-buffer buffer)
+        (setq buffer (find-file (format "%s/interactive/file-local-test-gjslint.js" dir)))
+        (sit-for 1) ;; wait for buffer-file-name set
+        (with-current-buffer buffer
+          (goto-char (point-min))
+          (forward-line 4)
+          (should (flymake-error-list)))
+        )))
+  )

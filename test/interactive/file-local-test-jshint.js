@@ -13,6 +13,6 @@ foo();
 // For information about File Variables, see the following URL.
 // http://www.gnu.org/software/emacs/manual/html_node/emacs/File-Variables.html#File-Variables
 
-/* Local Variables:     */
-/* flymake-gjshint: nil */
-/* End:                 */
+/* Local Variables:         */
+/* flymake-gjshint: jshint */
+/* End:                     */
