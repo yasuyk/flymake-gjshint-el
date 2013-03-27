@@ -1,4 +1,4 @@
-;;; flymake-gjshint.el --- A flymake handler for javascript using jshint and gjslint
+;;; flymake-gjshint.el --- A flymake handler for javascript using both jshint and gjslint
 
 ;; Copyright (C) 2013  Yasuyuki Oka
 
@@ -37,6 +37,12 @@
 ;; ((nil . ((flymake-gjshint . nil))))
 ;; -----------------------------------
 ;;
+;; Command:
+;;
+;; The following command is defined:
+;;
+;; * `flymake-gjshint:fixjsstyle'
+;;   Fix many of the glslint errors in current buffer by fixjsstyle.
 ;;
 
 ;;; Code:
@@ -129,7 +135,7 @@ the way up to the filesystem root."
 
 ;;;###autoload
 (defun flymake-gjshint:fixjsstyle ()
-  "Fix many of the glslint errors in current buffer."
+  "Fix many of the glslint errors in current buffer by fixjsstyle."
   (interactive)
   (if (executable-find flymake-gjshint:fixjsstyle-command)
       (when (equal 0 (call-process-shell-command

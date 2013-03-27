@@ -4,7 +4,7 @@ flymake-gjshint.el
 [![Build Status](https://travis-ci.org/yasuyk/flymake-gjshint-el.png?branch=master)](https://travis-ci.org/yasuyk/flymake-gjshint-el)
 
 An Emacs flymake handler for syntax-checking Javascript source code
-using [`jshint`][jshint] and [`gjslint`][gjslint].
+using both [`jshint`][jshint] and [`gjslint`][gjslint].
 
 Installation
 =============
@@ -15,6 +15,8 @@ directory containing `flymake-gjshint.el` to your `load-path`, and then `(requir
 
 Usage
 =====
+
+## configuration
 
 Add the following to your emacs init file:
 
@@ -28,8 +30,15 @@ Here’s an example of a `.dir-locals.el` file:
 
     ((nil . ((flymake-gjshint . nil))))
 
+## command
+
+The following command is defined:
+
+### flymake-gjshint:fixjsstyle
+
+Fix many of the glslint errors in current buffer by [`fixjsstyle`][fixjsstyle].
 
 [gjslint]:https://developers.google.com/closure/utilities/docs/linter_howto
 [jshint]:http://www.jshint.com
 [melpa]: http://melpa.milkbox.net
-
+[fixjsstyle]:https://developers.google.com/closure/utilities/docs/linter_howto
