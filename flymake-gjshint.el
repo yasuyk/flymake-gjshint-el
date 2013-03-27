@@ -59,7 +59,7 @@
 (defcustom flymake-gjshint:jshint-configuration-path nil
   "Path to a JSON configuration file for JSHint.
 
-If you locate `.jshintrc` in home directory, you need not to set this variables.
+If you locate `.jshintrc` in home directory, you need not to set this variable.
 JSHint will look for this file in the current working directory
 and, if not found, will move one level up the directory tree all
 the way up to the filesystem root."
