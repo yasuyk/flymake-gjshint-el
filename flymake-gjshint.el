@@ -55,15 +55,19 @@
   :prefix "flymake-gjshint")
 
 ;;;###autoload
-(defcustom flymake-gjshint t
-  "If non-nil, `flymake-gjshint' is enabled."
-  :type 'string
+(defcustom flymake-gjshint 'both
+  "Tool(s) to check syntax Javascript source code.
+
+Must be one of `both', `jshint', `gjslint' or nil.
+Set `both' to enable both `jshint' and `gjslint'.
+If This variable is nil, flymake is disabled."
+  :type 'symbol
   :group 'flymake-gjshint)
-(put 'flymake-gjshint 'safe-local-variable 'booleanp)
+(put 'flymake-gjshint 'safe-local-variable 'symbolp)
 
 ;;;###autoload
 (defcustom flymake-gjshint:jshint-configuration-path nil
-  "Path to a JSON configuration file for JSHint.
+  "Absolute Path to a JSON configuration file for JSHint.
 
 If you locate `.jshintrc` in home directory, you need not to set this variable.
 JSHint will look for this file in the current working directory
@@ -74,7 +78,7 @@ the way up to the filesystem root."
 
 ;;;###autoload
 (defcustom flymake-gjshint:gjslint-flagfile-path nil
-  "Path to a configuration file for Closure Linter."
+  "Absolute Path to a configuration file for Closure Linter."
   :type 'string
   :group 'flymake-gjshint)
 
@@ -113,11 +117,23 @@ the way up to the filesystem root."
   "Create syntax check command line using jshint and gjslint."
   (let* ((tempfile (flymake-init-create-temp-buffer-copy
                     'flymake-create-temp-inplace)))
-    (list "sh"
-          (list "-c"
-                (format "%s %s; %s %s;"
-                        (flymake-gjshint:jshint-command-line) tempfile
-                        (flymake-gjshint:gjslint-command-line) tempfile)))))
+    (cond ((eq flymake-gjshint 'both)
+           (list "sh"
+                 (list "-c"
+                       (format "%s %s; %s %s;"
+                               (flymake-gjshint:jshint-command-line) tempfile
+                               (flymake-gjshint:gjslint-command-line) tempfile))))
+          ((eq flymake-gjshint 'jshint)
+           (if flymake-gjshint:jshint-configuration-path
+               (list flymake-gjshint:jshint-command
+                     (list tempfile "--config" flymake-gjshint:jshint-configuration-path))
+           (list flymake-gjshint:jshint-command (list tempfile))))
+          ((eq flymake-gjshint 'gjslint)
+           (if flymake-gjshint:gjslint-flagfile-path
+               (list flymake-gjshint:gjslint-command
+                     (list tempfile "--flagfile" flymake-gjshint:gjslint-flagfile-path))
+             (list flymake-gjshint:gjslint-command (list tempfile))))
+           (t nil))))
 
 (defvar flymake-gjshint:allowed-file-name-masks
   '(".+\\.js$"
@@ -182,7 +198,7 @@ function `flymake-mode' alone will not suffice."
   (interactive)
   (let ((jshint (executable-find flymake-gjshint:jshint-command))
         (gjslint (executable-find flymake-gjshint:gjslint-command)))
-    (if (and flymake-gjshint jshint gjslint)
+    (if (and flymake-gjshint (or jshint gjslint))
         (progn
           (make-local-variable 'hack-local-variables-hook)
           (add-hook 'hack-local-variables-hook 'flymake-gjshint:setup))
