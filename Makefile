@@ -10,6 +10,9 @@ test-interactively: test/el-mock.el jshint gjslint
 checkdoc-batch: test/checkdoc-batch.el
 	$(EMACS) --batch -L test -l checkdoc-batch.el -f checkdoc-batch-commandline $(SRC) | grep -e "$(SRC):[1-9]" && exit 1 || exit 0
 
+check-package-format:
+	emacs $(SRC) --batch -l package -f package-buffer-info
+
 test/el-mock.el:
 	wget http://www.emacswiki.org/emacs/download/el-mock.el -O $@
 
@@ -25,9 +28,9 @@ gjslint:
 emacs-version:
 	$(EMACS) --version
 
-travis-ci: emacs-version test checkdoc-batch
+travis-ci: emacs-version test checkdoc-batch check-package-format
 
-bump-version: $(SRC) checkdoc-batch test
+bump-version: $(SRC) check-package-format checkdoc-batch test
 	@if [ "$(NEW_VERSION)" = "" ]; then \
 	  echo NEW_VERSION argument not provided.; \
 	  echo Usage: make bump-version NEW_VERSION=0.4.1; \
