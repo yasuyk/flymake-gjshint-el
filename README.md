@@ -6,6 +6,8 @@ flymake-gjshint.el
 An Emacs flymake handler for syntax-checking Javascript source code
 using both [`jshint`][jshint] and [`gjslint`][gjslint].
 
+These days you might be better served by [flycheck](https://github.com/flycheck/flycheck).
+
 Installation
 =============
 
